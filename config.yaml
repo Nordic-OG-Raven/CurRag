@@ -1,0 +1,42 @@
+data:
+  pdf_directory: "./data/pdfs"
+  persist_directory: "./chroma_db"
+
+chunking:
+  chunk_size: 1000
+  chunk_overlap: 200
+  separators: ["\n\n", "\n", ". ", " ", ""]
+
+embedding:
+  use_openai: true  # Use OpenAI embeddings for better accuracy
+  model_name: "text-embedding-ada-002"  # OpenAI's standard embedding model
+  fallback_model: "sentence-transformers/all-MiniLM-L6-v2"  # Fallback to local if needed
+  batch_size: 32
+
+retrieval:
+  top_k: 10  # Increased from 5 for better recall on academic content
+  similarity_threshold: 0.7
+  search_type: "similarity"  # or "mmr" for maximum marginal relevance
+  use_hybrid: true  # Enable hybrid search (semantic + keyword boosting)
+
+llm:
+  provider: "openai"
+  model: "gpt-4"
+  temperature: 0.1
+  max_tokens: 500
+  
+prompt:
+  use_hub: true  # Use LangChain Hub prompts
+  hub_prompt: "rlm/rag-prompt"  # Default hub prompt
+  custom_system_prompt: "You are a helpful assistant that answers questions based solely on the provided context from university lecture notes. If the context does not contain the answer, say 'I cannot find this information in the provided notes.' Always cite the source document and page number."
+
+langchain:
+  tracing: true  # Enable LangSmith tracing
+  project: "university-rag"  # LangSmith project name
+
+frontend:
+  framework: "streamlit"
+  port: 8501
+  title: "University Notes RAG System"
+  show_debug: false  # Show retrieved chunks and trace info
+
