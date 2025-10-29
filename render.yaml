@@ -2,7 +2,11 @@ services:
   - type: web
     name: currag
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      pip install -r requirements.txt
+      curl -L https://pub-e0e0da3552f34c84a16ac4c307e3f97a.r2.dev/chroma_db.tar.gz -o chroma_db.tar.gz
+      tar -xzf chroma_db.tar.gz
+      rm chroma_db.tar.gz
     startCommand: streamlit run app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
     envVars:
       - key: OPENAI_API_KEY
