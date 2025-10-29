@@ -101,6 +101,10 @@ def render_header():
     """Render the app header"""
     st.title("📚 University Notes RAG System")
     st.markdown("*Ask questions about your university lecture notes*")
+    
+    # Info banner for free tier hosting
+    st.info("ℹ️ **Demo Notice:** This is hosted on a free tier. First load may take up to 60 seconds if the app has been inactive. Subsequent queries are fast!")
+    
     st.markdown("---")
 
 
