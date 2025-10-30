@@ -6,13 +6,10 @@ services:
       set -e
       echo "Installing Python dependencies..."
       pip install -r requirements.txt
-      echo "Downloading ChromaDB from R2..."
-      curl -L -f https://pub-e0e0da3552f34c84a16ac4c307e3f97a.r2.dev/chroma_db.tar.gz -o chroma_db.tar.gz
-      echo "Extracting ChromaDB..."
+      echo "Extracting ChromaDB from Git LFS..."
       tar -xzf chroma_db.tar.gz
       echo "Verifying extraction..."
       ls -la chroma_db/
-      rm chroma_db.tar.gz
       echo "Build complete!"
     startCommand: streamlit run app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
     envVars:
