@@ -102,8 +102,12 @@ def render_header():
     st.title("📚 University Notes RAG System")
     st.markdown("*Ask questions about your university lecture notes*")
     
-    # Info banner for free tier hosting
-    st.info("ℹ️ **Demo Notice:** This is hosted on a free tier. First load may take up to 60 seconds if the app has been inactive. Subsequent queries are fast!")
+    # Project description
+    st.info(
+        "🧠 **Retrieval-Augmented Generation (RAG)** — an AI system that searches through my personal knowledge base "
+        "to answer your questions. Trained on **2,652 pages** from 26 university courses covering Business, Economics, "
+        "Data Science, and AI. Every answer is grounded in lecture notes written ny me, not generic internet knowledge."
+    )
     
     st.markdown("---")
 
@@ -228,6 +232,106 @@ def render_history():
             st.markdown("---")
 
 
+def render_course_catalog():
+    """Render catalog of all courses in the knowledge base"""
+    st.markdown("---")
+    st.markdown("### 📚 Course Catalog")
+    
+    # Display AU logo and intro
+    col1, col2 = st.columns([1, 4])
+    with col1:
+        try:
+            st.image("au_logo.png", width=100)
+        except:
+            pass  # Logo optional
+    with col2:
+        st.markdown(
+            "All answers are based on lecture notes from my **Bachelor's in Economics and Business Administration** "
+            "and **Master's in Business Intelligence** at Aarhus University. "
+            "Interested in learning more? View the full curricula: "
+            "[Bachelor Programme](https://bachelor.au.dk/en/economics-and-business-administration) | "
+            "[Master Programme](https://masters.au.dk/businessintelligence)"
+        )
+    
+    st.markdown("")
+    
+    # Bachelor courses table
+    st.markdown("#### 🎓 Bachelor's Degree - Economics and Business Administration")
+    bachelor_courses = {
+        "Course": [
+            "Organizational Behaviour",
+            "Strategy",
+            "Marketing Management",
+            "Operations Management",
+            "Finance",
+            "Financial Accounting",
+            "Management Accounting",
+            "Microeconomics",
+            "Macroeconomics",
+            "Descriptive Economics",
+            "Industrial Organization",
+            "Industrial Organization (Laws)",
+            "International Finance",
+            "Math Formulas"
+        ],
+        "Description": [
+            "Study of human behavior in organizational settings, leadership, and team dynamics",
+            "Corporate strategy formulation, competitive analysis, and strategic decision-making",
+            "Market analysis, consumer behavior, branding, and marketing strategy development",
+            "Production planning, supply chain management, and process optimization",
+            "Corporate finance, investment analysis, capital structure, and financial markets",
+            "External financial reporting, IFRS standards, and financial statement analysis",
+            "Internal accounting for planning, control, and managerial decision-making",
+            "Individual economic behavior, market mechanisms, and resource allocation",
+            "National economic performance, monetary policy, and business cycles",
+            "Empirical economic analysis and statistical methods in economics",
+            "Market structures, competition policy, and strategic firm behavior",
+            "Competition law, antitrust regulations, and legal frameworks for business",
+            "Foreign exchange markets, international monetary systems, and global finance",
+            "Mathematical foundations for business and economic analysis"
+        ]
+    }
+    st.dataframe(bachelor_courses, use_container_width=True, hide_index=True)
+    
+    st.markdown("")
+    
+    # Master courses table
+    st.markdown("#### 🎓 Master's Degree - Business Intelligence")
+    master_courses = {
+        "Course": [
+            "Business Intelligence (BI)",
+            "BI Front End",
+            "Business Development with IS",
+            "Business Forecasting",
+            "Customer Analytics",
+            "Data Science",
+            "Data Mining (DM)",
+            "ESG Analytics",
+            "Generative AI with LLMs",
+            "High Frequency Trading",
+            "Machine Learning (ML)",
+            "Qualitative Research Methods",
+            "Quantitative Research Methods"
+        ],
+        "Description": [
+            "Data warehousing, OLAP, dimensional modeling, and enterprise analytics systems",
+            "Dashboard design, data visualization, and user interface for BI systems",
+            "IT-enabled innovation, digital transformation, and information systems strategy",
+            "Time series analysis, forecasting models, and predictive analytics for business planning",
+            "Customer segmentation, CLV analysis, and data-driven marketing optimization",
+            "End-to-end data science process from problem definition to model deployment",
+            "Pattern discovery, clustering, classification, and association rule mining",
+            "Environmental, Social, and Governance metrics analysis for sustainable business",
+            "Large language models, prompt engineering, and AI applications in business",
+            "Algorithmic trading strategies, market microstructure, and quantitative finance",
+            "Supervised and unsupervised learning, model evaluation, and ML deployment",
+            "Interview methods, case studies, ethnography, and qualitative data analysis",
+            "Statistical inference, hypothesis testing, regression, and experimental design"
+        ]
+    }
+    st.dataframe(master_courses, use_container_width=True, hide_index=True)
+
+
 def render_admin_interface():
     """Render admin interface for document management"""
     st.sidebar.markdown("---")
@@ -259,6 +363,7 @@ def main():
     render_header()
     show_metadata, show_metrics = render_sidebar(vectorstore, config)
     render_query_interface(rag_chain, show_metadata, show_metrics)
+    render_course_catalog()
     render_admin_interface()
     
     # Footer
