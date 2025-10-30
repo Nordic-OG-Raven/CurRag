@@ -106,7 +106,7 @@ def render_header():
     st.info(
         "🧠 **Retrieval-Augmented Generation (RAG)** — an AI system that searches through my personal knowledge base "
         "to answer your questions. Trained on **2,652 pages** from 26 university courses covering Business, Economics, "
-        "Data Science, and AI. Every answer is grounded in lecture notes written ny me, not generic internet knowledge."
+        "Data Science, and AI. Every answer is grounded in lecture notes written by me, not generic internet knowledge."
     )
     
     st.markdown("---")
@@ -238,10 +238,10 @@ def render_course_catalog():
     st.markdown("### 📚 Course Catalog")
     
     # Display AU logo and intro
-    col1, col2 = st.columns([1, 4])
+    col1, col2 = st.columns([1, 5])
     with col1:
         try:
-            st.image("au_logo.png", width=100)
+            st.image("au_logo.png", width=150)
         except:
             pass  # Logo optional
     with col2:
