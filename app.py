@@ -97,6 +97,22 @@ def initialize_rag_system():
         return rag_chain, vectorstore, config
 
 
+def render_branding_bar():
+    """Render branding bar at top of app"""
+    st.markdown("""
+    <div style="background-color: #0f172a; border-bottom: 1px solid #1e293b; padding: 12px 16px; margin: -1rem -1rem 1rem -1rem;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="color: #7c3aed; font-weight: bold; font-size: 16px;">Nordic Raven Solutions</span>
+                <span style="color: #94a3b8;">•</span>
+                <span style="color: #94a3b8; font-size: 14px;">CurRag</span>
+            </div>
+            <a href="https://nordicravensolutions.com" style="color: #7c3aed; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#6d28d9'" onmouseout="this.style.color='#7c3aed'">← Back to Portfolio</a>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
 def render_header():
     """Render the app header"""
     st.title("📚 University Notes RAG System")
@@ -351,6 +367,9 @@ def render_admin_interface():
 def main():
     """Main application entry point"""
     
+    # Render branding bar
+    render_branding_bar()
+    
     # Initialize RAG system (cached)
     try:
         rag_chain, vectorstore, config = initialize_rag_system()
@@ -369,7 +388,7 @@ def main():
     # Footer
     st.markdown("---")
     st.markdown(
-        "<div style='text-align: center; color: gray;'>"
+        "<div style='text-align: center; color: #94a3b8;'>"
         "University Notes RAG System | Powered by LangChain & OpenAI"
         "</div>",
         unsafe_allow_html=True

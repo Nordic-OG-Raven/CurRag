@@ -1,0 +1,7 @@
+[theme]
+primaryColor = "#7c3aed"  # purple-700
+backgroundColor = "#0f172a"  # slate-950
+secondaryBackgroundColor = "#1e293b"  # slate-800
+textColor = "#f1f5f9"  # slate-100
+font = "sans serif"
+

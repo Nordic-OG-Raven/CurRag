@@ -10,7 +10,6 @@ A Retrieval-Augmented Generation (RAG) system for querying university lecture no
 - **OpenAI Embeddings**: text-embedding-3-small (1536-dim, optimized for academic content)
 - **OpenAI GPT-4**: High-quality response generation
 - **Streamlit UI**: User-friendly web interface
-- **Performance**: Sub-2-second retrieval for 10k-20k chunks
 - **Observability**: Built-in LangSmith tracing support
 
 ## 📋 Prerequisites
@@ -314,8 +313,7 @@ View traces at [smith.langchain.com](https://smith.langchain.com)
 
 Expected performance with 10k-20k chunks:
 
-- **Retrieval Time**: <2 seconds
-- **End-to-End Query**: <15 seconds (including LLM)
+- **End-to-End Query**: ~15-30 seconds (including LLM)
 - **Indexing Speed**: >100 chunks/second
 
 Benchmark your system:
