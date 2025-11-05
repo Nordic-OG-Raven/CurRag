@@ -103,7 +103,7 @@ def render_branding_bar():
     <div style="background-color: #0f172a; border-bottom: 1px solid #1e293b; padding: 12px 16px; margin: -1rem -1rem 1rem -1rem;">
         <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="color: #7c3aed; font-weight: bold; font-size: 16px;">Nordic Raven Solutions</span>
+                <span style="color: #7c3aed; font-weight: bold; font-size: 16px;">Nordic Raven Solutions 🐦‍⬛</span>
                 <span style="color: #94a3b8;">•</span>
                 <span style="color: #94a3b8; font-size: 14px;">CurRag</span>
             </div>
