@@ -99,6 +99,30 @@ def initialize_rag_system():
 
 def inject_custom_css():
     """Inject custom CSS to match website design system"""
+    # Inject favicon via JavaScript (more reliable in Streamlit)
+    st.markdown("""
+    <script>
+    (function() {
+        // Remove existing favicon
+        const existingFavicon = document.querySelector("link[rel='icon']");
+        if (existingFavicon) existingFavicon.remove();
+        
+        // Add new favicon
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        link.type = 'image/jpeg';
+        link.href = '/favicon.jpg';
+        document.head.appendChild(link);
+        
+        // Also set apple-touch-icon
+        const appleLink = document.createElement('link');
+        appleLink.rel = 'apple-touch-icon';
+        appleLink.href = '/favicon.jpg';
+        document.head.appendChild(appleLink);
+    })();
+    </script>
+    """, unsafe_allow_html=True)
+    
     st.markdown("""
     <style>
     /* Hide sidebar completely */
@@ -107,17 +131,61 @@ def inject_custom_css():
     header {visibility: hidden;}
     .stSidebar {display: none !important;}
     
+    /* Animated background - CSS particles */
+    .stApp::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #0f172a;
+        z-index: -2;
+    }
+    
+    .stApp::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 40% 20%, rgba(124, 58, 237, 0.06) 0%, transparent 50%);
+        background-size: 100% 100%;
+        animation: pulse 8s ease-in-out infinite;
+        z-index: -1;
+        pointer-events: none;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 0.5; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(1.05); }
+    }
+    
+    /* Animated particles */
+    @keyframes float {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        33% { transform: translate(30px, -30px) rotate(120deg); }
+        66% { transform: translate(-20px, 20px) rotate(240deg); }
+    }
+    
     /* Main container styling */
     .main .block-container {
         padding-top: 2rem;
         padding-bottom: 2rem;
         max-width: 1000px;
+        position: relative;
+        z-index: 1;
     }
     
     /* Background color */
     .stApp {
         background-color: #0f172a;
         color: #f1f5f9;
+        position: relative;
     }
     
     /* Text colors */
@@ -267,8 +335,12 @@ def inject_custom_css():
     }
     
     .logo-container img {
-        max-width: 200px;
+        max-width: 300px;
+        width: auto;
         height: auto;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        image-rendering: high-quality;
     }
     
     /* Link styling */
@@ -298,10 +370,10 @@ def inject_custom_css():
 
 def render_header(config):
     """Render the app header"""
-    # Logo
+    # Logo - use use_column_width=False to preserve quality
     st.markdown('<div class="logo-container">', unsafe_allow_html=True)
     try:
-        st.image("au_logo.png", width=200)
+        st.image("au_logo.png", use_column_width=False, width=300)
     except:
         pass
     st.markdown('</div>', unsafe_allow_html=True)
@@ -529,7 +601,7 @@ def render_footer(config):
 def main():
     """Main application entry point"""
     
-    # Inject custom CSS
+    # Inject favicon and custom CSS first
     inject_custom_css()
     
     # Initialize RAG system (cached)
