@@ -100,32 +100,35 @@ def initialize_rag_system():
 def inject_custom_css():
     """Inject custom CSS to match website design system"""
     # Inject favicon via JavaScript (deferred to avoid blocking)
-    st.markdown("""
-    <script>
-    window.addEventListener('DOMContentLoaded', function() {
-        try {
-            // Remove existing favicon
-            const existingFavicon = document.querySelector("link[rel='icon']");
-            if (existingFavicon) existingFavicon.remove();
-            
-            // Add new favicon
-            const link = document.createElement('link');
-            link.rel = 'icon';
-            link.type = 'image/jpeg';
-            link.href = '/favicon.jpg';
-            document.head.appendChild(link);
-            
-            // Also set apple-touch-icon
-            const appleLink = document.createElement('link');
-            appleLink.rel = 'apple-touch-icon';
-            appleLink.href = '/favicon.jpg';
-            document.head.appendChild(appleLink);
-        } catch(e) {
-            console.error('Favicon injection error:', e);
-        }
-    });
-    </script>
-    """, unsafe_allow_html=True)
+    try:
+        st.markdown("""
+        <script>
+        (function() {
+            try {
+                // Remove existing favicon
+                const existingFavicon = document.querySelector("link[rel='icon']");
+                if (existingFavicon) existingFavicon.remove();
+                
+                // Add new favicon
+                const link = document.createElement('link');
+                link.rel = 'icon';
+                link.type = 'image/jpeg';
+                link.href = '/favicon.jpg';
+                document.head.appendChild(link);
+                
+                // Also set apple-touch-icon
+                const appleLink = document.createElement('link');
+                appleLink.rel = 'apple-touch-icon';
+                appleLink.href = '/favicon.jpg';
+                document.head.appendChild(appleLink);
+            } catch(e) {
+                console.error('Favicon injection error:', e);
+            }
+        })();
+        </script>
+        """, unsafe_allow_html=True)
+    except Exception as e:
+        pass  # Don't crash if JS injection fails
     
     st.markdown("""
     <style>
@@ -605,22 +608,20 @@ def render_footer(config):
 def main():
     """Main application entry point"""
     
-    # Inject favicon and custom CSS first
-    inject_custom_css()
+    # Show something IMMEDIATELY - before any other code
+    st.title("University Notes RAG System")
+    st.write("Loading...")
     
-    # Show loading state immediately to test if page loads
-    loading_placeholder = st.empty()
-    with loading_placeholder.container():
-        st.title("University Notes RAG System")
-        st.markdown("Initializing RAG system...")
+    # Inject favicon and custom CSS AFTER showing content
+    try:
+        inject_custom_css()
+    except Exception as e:
+        st.warning(f"CSS injection failed: {e}")
     
     # Initialize RAG system (cached)
     try:
         rag_chain, vectorstore, config = initialize_rag_system()
-        # Clear loading placeholder
-        loading_placeholder.empty()
     except Exception as e:
-        loading_placeholder.empty()
         st.error(f"❌ Failed to initialize RAG system: {str(e)}")
         st.info("Please check your configuration and environment variables.")
         import traceback
@@ -628,7 +629,8 @@ def main():
             st.code(traceback.format_exc())
         st.stop()
     
-    # Render UI
+    # Clear the loading message and render full UI
+    st.empty()
     render_header(config)
     render_query_interface(rag_chain, config)
     render_course_catalog()
