@@ -99,27 +99,31 @@ def initialize_rag_system():
 
 def inject_custom_css():
     """Inject custom CSS to match website design system"""
-    # Inject favicon via JavaScript (more reliable in Streamlit)
+    # Inject favicon via JavaScript (deferred to avoid blocking)
     st.markdown("""
     <script>
-    (function() {
-        // Remove existing favicon
-        const existingFavicon = document.querySelector("link[rel='icon']");
-        if (existingFavicon) existingFavicon.remove();
-        
-        // Add new favicon
-        const link = document.createElement('link');
-        link.rel = 'icon';
-        link.type = 'image/jpeg';
-        link.href = '/favicon.jpg';
-        document.head.appendChild(link);
-        
-        // Also set apple-touch-icon
-        const appleLink = document.createElement('link');
-        appleLink.rel = 'apple-touch-icon';
-        appleLink.href = '/favicon.jpg';
-        document.head.appendChild(appleLink);
-    })();
+    window.addEventListener('DOMContentLoaded', function() {
+        try {
+            // Remove existing favicon
+            const existingFavicon = document.querySelector("link[rel='icon']");
+            if (existingFavicon) existingFavicon.remove();
+            
+            // Add new favicon
+            const link = document.createElement('link');
+            link.rel = 'icon';
+            link.type = 'image/jpeg';
+            link.href = '/favicon.jpg';
+            document.head.appendChild(link);
+            
+            // Also set apple-touch-icon
+            const appleLink = document.createElement('link');
+            appleLink.rel = 'apple-touch-icon';
+            appleLink.href = '/favicon.jpg';
+            document.head.appendChild(appleLink);
+        } catch(e) {
+            console.error('Favicon injection error:', e);
+        }
+    });
     </script>
     """, unsafe_allow_html=True)
     
@@ -608,13 +612,26 @@ def main():
     try:
         rag_chain, vectorstore, config = initialize_rag_system()
     except Exception as e:
+        # Show error but don't stop - render UI anyway
         st.error(f"❌ Failed to initialize RAG system: {str(e)}")
         st.info("Please check your configuration and environment variables.")
-        st.stop()
+        import traceback
+        with st.expander("Error Details"):
+            st.code(traceback.format_exc())
+        # Use default config for UI rendering
+        config = {
+            "llm": {"model": "gpt-4", "temperature": 0.1},
+            "retrieval": {"top_k": 5}
+        }
+        rag_chain = None
     
-    # Render UI
-    render_header(config)
-    render_query_interface(rag_chain, config)
+    # Render UI (always render, even if RAG failed)
+    if rag_chain is not None:
+        render_header(config)
+        render_query_interface(rag_chain, config)
+    else:
+        render_header(config)
+        st.warning("RAG system not available. Please check the error above.")
     render_course_catalog()
     render_footer(config)
 
