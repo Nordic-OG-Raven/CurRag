@@ -58,7 +58,9 @@ logs/
 .coverage
 htmlcov/
 *.png
+!au_logo.png
 *.jpg
+!favicon.jpg
 
 # Jupyter
 .ipynb_checkpoints/

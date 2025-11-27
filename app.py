@@ -23,7 +23,7 @@ st.set_page_config(
     page_title="University Notes RAG",
     page_icon="📚",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 
@@ -97,65 +97,232 @@ def initialize_rag_system():
         return rag_chain, vectorstore, config
 
 
-def render_branding_bar():
-    """Render branding bar at top of app"""
+def inject_custom_css():
+    """Inject custom CSS to match website design system"""
     st.markdown("""
-    <div style="background-color: #0f172a; border-bottom: 1px solid #1e293b; padding: 12px 16px; margin: -1rem -1rem 1rem -1rem;">
-        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="color: #7c3aed; font-weight: bold; font-size: 16px;">Nordic Raven Solutions 🐦‍⬛</span>
-                <span style="color: #94a3b8;">•</span>
-                <span style="color: #94a3b8; font-size: 14px;">CurRag</span>
-            </div>
-            <a href="https://nordicravensolutions.com" style="color: #7c3aed; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#6d28d9'" onmouseout="this.style.color='#7c3aed'">← Back to Portfolio</a>
-        </div>
+    <style>
+    /* Hide sidebar completely */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    .stSidebar {display: none !important;}
+    
+    /* Main container styling */
+    .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        max-width: 1000px;
+    }
+    
+    /* Background color */
+    .stApp {
+        background-color: #0f172a;
+        color: #f1f5f9;
+    }
+    
+    /* Text colors */
+    h1, h2, h3, h4, h5, h6 {
+        color: #f1f5f9 !important;
+    }
+    
+    p, div, span, label {
+        color: #f1f5f9 !important;
+    }
+    
+    /* Remove default Streamlit styling */
+    .stMarkdown {
+        color: #f1f5f9;
+    }
+    
+    /* Title styling */
+    h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #f1f5f9 !important;
+    }
+    
+    /* Subtitle */
+    .subtitle {
+        color: #94a3b8;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
+    /* Description text */
+    .description {
+        color: #94a3b8;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background-color: #1e293b;
+        border-radius: 12px;
+        border: 1px solid #1e293b;
+    }
+    
+    /* Input field styling */
+    .stTextInput > div > div > input {
+        background-color: #1e293b;
+        color: #f1f5f9;
+        border: 1px solid #1e293b;
+        border-radius: 8px;
+        padding: 0.75rem;
+    }
+    
+    .stTextInput > div > div > input:focus {
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
+    }
+    
+    /* Button styling */
+    .stButton > button {
+        background-color: #7c3aed;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    
+    .stButton > button:hover {
+        background-color: #6d28d9;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Expander styling */
+    .streamlit-expanderHeader {
+        background-color: #1e293b;
+        color: #f1f5f9;
+        border-radius: 8px;
+    }
+    
+    .streamlit-expanderContent {
+        background-color: #1e293b;
+        color: #f1f5f9;
+    }
+    
+    /* Answer section */
+    .answer-section {
+        background-color: #1e293b;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid #1e293b;
+        margin-top: 1.5rem;
+    }
+    
+    /* Metrics styling */
+    .metric-container {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    [data-testid="stMetricValue"] {
+        color: #7c3aed;
+    }
+    
+    [data-testid="stMetricLabel"] {
+        color: #94a3b8;
+    }
+    
+    /* Divider */
+    hr {
+        border-color: #1e293b;
+        margin: 2rem 0;
+    }
+    
+    /* Footer */
+    .footer {
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.875rem;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid #1e293b;
+    }
+    
+    /* Configuration info (subtle) */
+    .config-info {
+        color: #64748b;
+        font-size: 0.75rem;
+        text-align: center;
+        margin-top: 1rem;
+    }
+    
+    /* Course catalog styling */
+    .dataframe {
+        background-color: #1e293b;
+        border: 1px solid #1e293b;
+        border-radius: 12px;
+    }
+    
+    /* Logo container */
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .logo-container img {
+        max-width: 200px;
+        height: auto;
+    }
+    
+    /* Link styling */
+    a {
+        color: #7c3aed;
+        text-decoration: none;
+    }
+    
+    a:hover {
+        color: #6d28d9;
+    }
+    
+    /* Spinner */
+    .stSpinner > div {
+        border-top-color: #7c3aed;
+    }
+    
+    /* Error messages */
+    .stAlert {
+        background-color: #1e293b;
+        border: 1px solid #1e293b;
+        border-radius: 8px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+def render_header(config):
+    """Render the app header"""
+    # Logo
+    st.markdown('<div class="logo-container">', unsafe_allow_html=True)
+    try:
+        st.image("au_logo.png", width=200)
+    except:
+        pass
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Title
+    st.title("University Notes RAG System")
+    
+    # Subtitle
+    st.markdown('<p class="subtitle">Ask questions about your university lecture notes</p>', unsafe_allow_html=True)
+    
+    # Description (styled, not blue info box)
+    st.markdown("""
+    <div class="description">
+        <strong>Retrieval-Augmented Generation (RAG)</strong> — an AI system that searches through my personal knowledge base 
+        to answer your questions. Trained on <strong>2,652 pages</strong> from 26 university courses covering Business, Economics, 
+        Data Science, and AI. Every answer is grounded in lecture notes written by me, not generic internet knowledge.
     </div>
     """, unsafe_allow_html=True)
 
 
-def render_header():
-    """Render the app header"""
-    st.title("📚 University Notes RAG System")
-    st.markdown("*Ask questions about your university lecture notes*")
-    
-    # Project description
-    st.info(
-        "🧠 **Retrieval-Augmented Generation (RAG)** — an AI system that searches through my personal knowledge base "
-        "to answer your questions. Trained on **2,652 pages** from 26 university courses covering Business, Economics, "
-        "Data Science, and AI. Every answer is grounded in lecture notes written by me, not generic internet knowledge."
-    )
-    
-    st.markdown("---")
-
-
-def render_sidebar(vectorstore, config):
-    """Render the sidebar with system information"""
-    st.sidebar.title("⚙️ System Info")
-    
-    # Vector store statistics
-    stats = get_collection_stats(vectorstore)
-    st.sidebar.metric("Total Documents", stats.get("total_documents", 0))
-    st.sidebar.metric("Collection", stats.get("collection_name", "unknown"))
-    
-    st.sidebar.markdown("---")
-    
-    # Configuration
-    st.sidebar.subheader("Configuration")
-    st.sidebar.text(f"Model: {config.get('llm', {}).get('model', 'gpt-4')}")
-    st.sidebar.text(f"Temperature: {config.get('llm', {}).get('temperature', 0.1)}")
-    st.sidebar.text(f"Top-K: {config.get('retrieval', {}).get('top_k', 5)}")
-    
-    st.sidebar.markdown("---")
-    
-    # Settings
-    st.sidebar.subheader("Display Settings")
-    show_metadata = st.sidebar.checkbox("Show metadata", value=False)
-    show_metrics = st.sidebar.checkbox("Show metrics", value=True)
-    
-    return show_metadata, show_metrics
-
-
-def render_query_interface(rag_chain, show_metadata, show_metrics):
+def render_query_interface(rag_chain, config):
     """Render the main query interface"""
     
     # Query input
@@ -165,7 +332,8 @@ def render_query_interface(rag_chain, show_metadata, show_metrics):
         question = st.text_input(
             "Ask a question:",
             placeholder="e.g., What is gradient descent?",
-            key="question_input"
+            key="question_input",
+            label_visibility="visible"
         )
     
     with col2:
@@ -191,14 +359,14 @@ def render_query_interface(rag_chain, show_metadata, show_metrics):
     
     # Process query
     if submit and question:
-        process_query(rag_chain, question, show_metadata, show_metrics)
+        process_query(rag_chain, question, config)
     
     # Display query history
     if "query_history" in st.session_state and st.session_state.query_history:
         render_history()
 
 
-def process_query(rag_chain, question, show_metadata, show_metrics):
+def process_query(rag_chain, question, config):
     """Process a query and display results"""
     
     with st.spinner("🔍 Searching and generating answer..."):
@@ -206,21 +374,17 @@ def process_query(rag_chain, question, show_metadata, show_metrics):
         eval_results = evaluate_rag(rag_chain, question)
     
     # Display results
+    st.markdown('<div class="answer-section">', unsafe_allow_html=True)
     st.subheader("📝 Answer")
     st.markdown(eval_results["output"])
+    st.markdown('</div>', unsafe_allow_html=True)
     
     # Display metrics
-    if show_metrics:
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("⏱️ Runtime", f"{eval_results['runtime']:.2f}s")
-        with col2:
-            st.metric("🔢 Est. Tokens", eval_results['estimated_tokens'])
-    
-    # Display metadata if requested
-    if show_metadata:
-        with st.expander("🔍 Debug Info"):
-            st.json(eval_results)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("⏱️ Runtime", f"{eval_results['runtime']:.2f}s")
+    with col2:
+        st.metric("🔢 Est. Tokens", eval_results['estimated_tokens'])
     
     # Save to history
     if "query_history" not in st.session_state:
@@ -253,21 +417,14 @@ def render_course_catalog():
     st.markdown("---")
     st.markdown("### 📚 Course Catalog")
     
-    # Display AU logo and intro
-    col1, col2 = st.columns([1, 5])
-    with col1:
-        try:
-            st.image("au_logo.png", width=150)
-        except:
-            pass  # Logo optional
-    with col2:
-        st.markdown(
-            "All answers are based on lecture notes from my **Bachelor's in Economics and Business Administration** "
-            "and **Master's in Business Intelligence** at Aarhus University. "
-            "Interested in learning more? View the full curricula: "
-            "[Bachelor Programme](https://bachelor.au.dk/en/economics-and-business-administration) | "
-            "[Master Programme](https://masters.au.dk/businessintelligence)"
-        )
+    # Intro text
+    st.markdown(
+        "All answers are based on lecture notes from my **Bachelor's in Economics and Business Administration** "
+        "and **Master's in Business Intelligence** at Aarhus University. "
+        "Interested in learning more? View the full curricula: "
+        "[Bachelor Programme](https://bachelor.au.dk/en/economics-and-business-administration) | "
+        "[Master Programme](https://masters.au.dk/businessintelligence)"
+    )
     
     st.markdown("")
     
@@ -348,27 +505,32 @@ def render_course_catalog():
     st.dataframe(master_courses, use_container_width=True, hide_index=True)
 
 
-def render_admin_interface():
-    """Render admin interface for document management"""
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("🔧 Admin")
+def render_footer(config):
+    """Render footer with configuration info"""
+    st.markdown("---")
     
-    if st.sidebar.button("🔄 Reload System"):
-        st.cache_resource.clear()
-        st.success("System reloaded! Refresh the page.")
-        st.rerun()
+    # Configuration info (subtle)
+    model = config.get('llm', {}).get('model', 'gpt-4')
+    temperature = config.get('llm', {}).get('temperature', 0.1)
+    top_k = config.get('retrieval', {}).get('top_k', 5)
     
-    if st.sidebar.button("🗑️ Clear History"):
-        if "query_history" in st.session_state:
-            st.session_state.query_history = []
-            st.success("History cleared!")
+    st.markdown(
+        f'<div class="config-info">Model: {model} • Temperature: {temperature} • Top-K: {top_k}</div>',
+        unsafe_allow_html=True
+    )
+    
+    # Footer
+    st.markdown(
+        '<div class="footer">University Notes RAG System | Powered by LangChain & OpenAI</div>',
+        unsafe_allow_html=True
+    )
 
 
 def main():
     """Main application entry point"""
     
-    # Render branding bar
-    render_branding_bar()
+    # Inject custom CSS
+    inject_custom_css()
     
     # Initialize RAG system (cached)
     try:
@@ -379,22 +541,11 @@ def main():
         st.stop()
     
     # Render UI
-    render_header()
-    show_metadata, show_metrics = render_sidebar(vectorstore, config)
-    render_query_interface(rag_chain, show_metadata, show_metrics)
+    render_header(config)
+    render_query_interface(rag_chain, config)
     render_course_catalog()
-    render_admin_interface()
-    
-    # Footer
-    st.markdown("---")
-    st.markdown(
-        "<div style='text-align: center; color: #94a3b8;'>"
-        "University Notes RAG System | Powered by LangChain & OpenAI"
-        "</div>",
-        unsafe_allow_html=True
-    )
+    render_footer(config)
 
 
 if __name__ == "__main__":
     main()
-
