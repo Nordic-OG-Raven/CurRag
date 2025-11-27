@@ -132,10 +132,10 @@ def inject_custom_css():
     
     st.markdown("""
     <style>
-    /* Hide sidebar completely */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    /* Hide sidebar completely - but don't break if elements don't exist */
+    #MainMenu {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    header {visibility: hidden !important;}
     .stSidebar {display: none !important;}
     
     /* Animated background - CSS particles */
@@ -608,30 +608,28 @@ def render_footer(config):
 def main():
     """Main application entry point"""
     
-    # Show something IMMEDIATELY - before any other code
-    st.title("University Notes RAG System")
-    st.write("Loading...")
+    # CRITICAL: Show content FIRST before ANY imports or initialization
+    st.write("# University Notes RAG System")
+    st.write("App is loading...")
     
-    # Inject favicon and custom CSS AFTER showing content - with error handling
-    # Don't let CSS injection break the page
+    # Now try to inject CSS (but don't let it break anything)
     try:
         inject_custom_css()
-    except Exception as e:
-        # Silently fail - don't break the page
+    except:
         pass
     
-    # Initialize RAG system (cached)
+    # Initialize RAG system (cached) - but don't let it block rendering
     rag_chain = None
     config = None
     try:
         rag_chain, vectorstore, config = initialize_rag_system()
+        st.success("✅ RAG system initialized")
     except Exception as e:
         st.error(f"❌ Failed to initialize RAG system: {str(e)}")
         st.info("Please check your configuration and environment variables.")
         import traceback
         with st.expander("Error Details"):
             st.code(traceback.format_exc())
-        # Don't stop - show what we can
         config = {
             "llm": {"model": "gpt-4", "temperature": 0.1},
             "retrieval": {"top_k": 5}
@@ -639,8 +637,6 @@ def main():
     
     # Render UI (even if RAG failed)
     if rag_chain is not None and config is not None:
-        # Clear the loading message and render full UI
-        st.empty()
         render_header(config)
         render_query_interface(rag_chain, config)
     else:
