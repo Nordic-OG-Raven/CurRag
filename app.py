@@ -612,11 +612,13 @@ def main():
     st.title("University Notes RAG System")
     st.write("Loading...")
     
-    # Inject favicon and custom CSS AFTER showing content
+    # Inject favicon and custom CSS AFTER showing content - with error handling
+    # Don't let CSS injection break the page
     try:
         inject_custom_css()
     except Exception as e:
-        st.warning(f"CSS injection failed: {e}")
+        # Silently fail - don't break the page
+        pass
     
     # Initialize RAG system (cached)
     rag_chain = None
@@ -651,4 +653,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        # Catch any top-level errors and display them
+        st.error(f"❌ Application error: {str(e)}")
+        import traceback
+        with st.expander("Full Error Details"):
+            st.code(traceback.format_exc())
+        st.stop()
