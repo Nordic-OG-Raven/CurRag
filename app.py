@@ -619,6 +619,8 @@ def main():
         st.warning(f"CSS injection failed: {e}")
     
     # Initialize RAG system (cached)
+    rag_chain = None
+    config = None
     try:
         rag_chain, vectorstore, config = initialize_rag_system()
     except Exception as e:
@@ -627,14 +629,25 @@ def main():
         import traceback
         with st.expander("Error Details"):
             st.code(traceback.format_exc())
-        st.stop()
+        # Don't stop - show what we can
+        config = {
+            "llm": {"model": "gpt-4", "temperature": 0.1},
+            "retrieval": {"top_k": 5}
+        }
     
-    # Clear the loading message and render full UI
-    st.empty()
-    render_header(config)
-    render_query_interface(rag_chain, config)
+    # Render UI (even if RAG failed)
+    if rag_chain is not None and config is not None:
+        # Clear the loading message and render full UI
+        st.empty()
+        render_header(config)
+        render_query_interface(rag_chain, config)
+    else:
+        st.warning("⚠️ RAG system unavailable. Please check the error above.")
+        if config:
+            render_header(config)
     render_course_catalog()
-    render_footer(config)
+    if config:
+        render_footer(config)
 
 
 if __name__ == "__main__":
