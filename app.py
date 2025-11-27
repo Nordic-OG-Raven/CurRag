@@ -608,30 +608,29 @@ def main():
     # Inject favicon and custom CSS first
     inject_custom_css()
     
+    # Show loading state immediately to test if page loads
+    loading_placeholder = st.empty()
+    with loading_placeholder.container():
+        st.title("University Notes RAG System")
+        st.markdown("Initializing RAG system...")
+    
     # Initialize RAG system (cached)
     try:
         rag_chain, vectorstore, config = initialize_rag_system()
+        # Clear loading placeholder
+        loading_placeholder.empty()
     except Exception as e:
-        # Show error but don't stop - render UI anyway
+        loading_placeholder.empty()
         st.error(f"❌ Failed to initialize RAG system: {str(e)}")
         st.info("Please check your configuration and environment variables.")
         import traceback
         with st.expander("Error Details"):
             st.code(traceback.format_exc())
-        # Use default config for UI rendering
-        config = {
-            "llm": {"model": "gpt-4", "temperature": 0.1},
-            "retrieval": {"top_k": 5}
-        }
-        rag_chain = None
+        st.stop()
     
-    # Render UI (always render, even if RAG failed)
-    if rag_chain is not None:
-        render_header(config)
-        render_query_interface(rag_chain, config)
-    else:
-        render_header(config)
-        st.warning("RAG system not available. Please check the error above.")
+    # Render UI
+    render_header(config)
+    render_query_interface(rag_chain, config)
     render_course_catalog()
     render_footer(config)
 
