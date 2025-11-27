@@ -99,100 +99,25 @@ def initialize_rag_system():
 
 def inject_custom_css():
     """Inject custom CSS to match website design system"""
-    # Inject favicon via JavaScript (deferred to avoid blocking)
-    try:
-        st.markdown("""
-        <script>
-        (function() {
-            try {
-                // Remove existing favicon
-                const existingFavicon = document.querySelector("link[rel='icon']");
-                if (existingFavicon) existingFavicon.remove();
-                
-                // Add new favicon
-                const link = document.createElement('link');
-                link.rel = 'icon';
-                link.type = 'image/jpeg';
-                link.href = '/favicon.jpg';
-                document.head.appendChild(link);
-                
-                // Also set apple-touch-icon
-                const appleLink = document.createElement('link');
-                appleLink.rel = 'apple-touch-icon';
-                appleLink.href = '/favicon.jpg';
-                document.head.appendChild(appleLink);
-            } catch(e) {
-                console.error('Favicon injection error:', e);
-            }
-        })();
-        </script>
-        """, unsafe_allow_html=True)
-    except Exception as e:
-        pass  # Don't crash if JS injection fails
-    
     st.markdown("""
     <style>
-    /* Hide sidebar completely - but don't break if elements don't exist */
-    #MainMenu {visibility: hidden !important;}
-    footer {visibility: hidden !important;}
-    header {visibility: hidden !important;}
+    /* Hide sidebar completely */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
     .stSidebar {display: none !important;}
-    
-    /* Animated background - CSS particles */
-    .stApp::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #0f172a;
-        z-index: -2;
-    }
-    
-    .stApp::after {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: 
-            radial-gradient(circle at 20% 50%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
-            radial-gradient(circle at 40% 20%, rgba(124, 58, 237, 0.06) 0%, transparent 50%);
-        background-size: 100% 100%;
-        animation: pulse 8s ease-in-out infinite;
-        z-index: -1;
-        pointer-events: none;
-    }
-    
-    @keyframes pulse {
-        0%, 100% { opacity: 0.5; transform: scale(1); }
-        50% { opacity: 0.8; transform: scale(1.05); }
-    }
-    
-    /* Animated particles */
-    @keyframes float {
-        0%, 100% { transform: translate(0, 0) rotate(0deg); }
-        33% { transform: translate(30px, -30px) rotate(120deg); }
-        66% { transform: translate(-20px, 20px) rotate(240deg); }
-    }
     
     /* Main container styling */
     .main .block-container {
         padding-top: 2rem;
         padding-bottom: 2rem;
         max-width: 1000px;
-        position: relative;
-        z-index: 1;
     }
     
     /* Background color */
     .stApp {
         background-color: #0f172a;
         color: #f1f5f9;
-        position: relative;
     }
     
     /* Text colors */
@@ -333,23 +258,6 @@ def inject_custom_css():
         border-radius: 12px;
     }
     
-    /* Logo container */
-    .logo-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 2rem;
-    }
-    
-    .logo-container img {
-        max-width: 300px;
-        width: auto;
-        height: auto;
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
-        image-rendering: high-quality;
-    }
-    
     /* Link styling */
     a {
         color: #7c3aed;
@@ -377,14 +285,6 @@ def inject_custom_css():
 
 def render_header(config):
     """Render the app header"""
-    # Logo - use use_column_width=False to preserve quality
-    st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-    try:
-        st.image("au_logo.png", use_column_width=False, width=300)
-    except:
-        pass
-    st.markdown('</div>', unsafe_allow_html=True)
-    
     # Title
     st.title("University Notes RAG System")
     
@@ -608,53 +508,23 @@ def render_footer(config):
 def main():
     """Main application entry point"""
     
-    # CRITICAL: Show content FIRST before ANY imports or initialization
-    st.write("# University Notes RAG System")
-    st.write("App is loading...")
+    # Inject custom CSS
+    inject_custom_css()
     
-    # Now try to inject CSS (but don't let it break anything)
-    try:
-        inject_custom_css()
-    except:
-        pass
-    
-    # Initialize RAG system (cached) - but don't let it block rendering
-    rag_chain = None
-    config = None
+    # Initialize RAG system (cached)
     try:
         rag_chain, vectorstore, config = initialize_rag_system()
-        st.success("✅ RAG system initialized")
     except Exception as e:
         st.error(f"❌ Failed to initialize RAG system: {str(e)}")
         st.info("Please check your configuration and environment variables.")
-        import traceback
-        with st.expander("Error Details"):
-            st.code(traceback.format_exc())
-        config = {
-            "llm": {"model": "gpt-4", "temperature": 0.1},
-            "retrieval": {"top_k": 5}
-        }
+        st.stop()
     
-    # Render UI (even if RAG failed)
-    if rag_chain is not None and config is not None:
-        render_header(config)
-        render_query_interface(rag_chain, config)
-    else:
-        st.warning("⚠️ RAG system unavailable. Please check the error above.")
-        if config:
-            render_header(config)
+    # Render UI
+    render_header(config)
+    render_query_interface(rag_chain, config)
     render_course_catalog()
-    if config:
-        render_footer(config)
+    render_footer(config)
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        # Catch any top-level errors and display them
-        st.error(f"❌ Application error: {str(e)}")
-        import traceback
-        with st.expander("Full Error Details"):
-            st.code(traceback.format_exc())
-        st.stop()
+    main()
